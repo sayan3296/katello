@@ -83,7 +83,8 @@ module Actions
 
         def validate_repo!(repo:, source_url:, validate_contents:, skip_metadata_check:, skip_candlepin_check:)
           fail ::Katello::Errors::InvalidActionOptionError, _("Unable to sync repo. This repository does not have a feed url.") if repo.url.blank? && source_url.blank?
-          fail ::Katello::Errors::InvalidActionOptionError, _("Cannot validate contents on non-yum/deb repositories.") if validate_contents && !repo.yum? && !repo.deb?
+          fail ::Katello::Errors::InvalidActionOptionError, _("Cannot validate contents on non-yum/deb/docker/file repositories.") if validate_contents && !repo.yum? && !repo.deb? &&
+                                                                                                                                      !repo.docker? && !repo.file?
           fail ::Katello::Errors::InvalidActionOptionError, _("Cannot skip metadata check on non-yum/deb repositories.") if skip_metadata_check && !repo.yum? && !repo.deb?
           ::Katello::Util::CandlepinRepositoryChecker.check_repository_for_sync!(repo) if repo.yum? && !skip_candlepin_check
         end
